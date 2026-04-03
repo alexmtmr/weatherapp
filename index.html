@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Observer — Weather Dashboard</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary-container": "#53514e",
+                        "tertiary-fixed-dim": "#e6e6df",
+                        "surface-tint": "#605e5b",
+                        "inverse-on-surface": "#9c9d99",
+                        "error": "#9e422c",
+                        "inverse-surface": "#0d0f0c",
+                        "secondary": "#615f5a",
+                        "on-background": "#2e342d",
+                        "surface-container-high": "#e5eae0",
+                        "on-surface-variant": "#5a6159",
+                        "on-primary": "#fcf7f2",
+                        "tertiary-fixed": "#f4f4ed",
+                        "tertiary-container": "#f4f4ed",
+                        "secondary-fixed": "#e6e2dc",
+                        "primary-fixed-dim": "#d8d4cf",
+                        "outline": "#767c74",
+                        "primary-container": "#e6e2dd",
+                        "on-primary-fixed-variant": "#5d5b58",
+                        "on-surface": "#2e342d",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#fafaf5",
+                        "on-secondary-fixed-variant": "#5d5b57",
+                        "on-secondary-container": "#53514d",
+                        "surface": "#fafaf5",
+                        "on-error": "#fff7f6",
+                        "surface-container": "#ecefe7",
+                        "primary-dim": "#54524f",
+                        "surface-container-low": "#f3f4ee",
+                        "secondary-fixed-dim": "#d8d4ce",
+                        "on-error-container": "#742410",
+                        "surface-dim": "#d5dcd0",
+                        "outline-variant": "#aeb4aa",
+                        "surface-container-highest": "#dee4da",
+                        "on-secondary": "#fdf8f2",
+                        "tertiary-dim": "#52544f",
+                        "tertiary": "#5e605b",
+                        "primary-fixed": "#e6e2dd",
+                        "surface-variant": "#dee4da",
+                        "on-tertiary": "#faf9f3",
+                        "inverse-primary": "#ffffff",
+                        "on-secondary-fixed": "#413f3b",
+                        "secondary-dim": "#55534e",
+                        "error-dim": "#5c1202",
+                        "error-container": "#fe8b70",
+                        "primary": "#605e5b",
+                        "surface-bright": "#fafaf5"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        full: "9999px"
+                    },
+                    fontFamily: {
+                        headline: ["Space Grotesk", "sans-serif"],
+                        body: ["Manrope", "sans-serif"],
+                        label: ["Manrope", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-surface text-on-surface font-body antialiased">
+
+    <!-- Main Content -->
+    <main class="min-h-screen pb-24 md:pb-8">
+
+        <!-- Top Navigation Bar -->
+        <header id="section-locations" class="w-full pt-4 pb-2 flex justify-between items-center px-6 max-w-screen-xl mx-auto scroll-mt-6">
+            <div class="flex items-center gap-4 flex-1">
+                <div class="relative w-full max-w-xs group">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline-variant text-sm">search</span>
+                    <input id="search-input" type="text" placeholder="Search Location..." class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary-container font-body" />
+                    <!-- Search Results Dropdown -->
+                    <div id="search-results" class="absolute top-full left-0 w-full mt-2 bg-surface-container-lowest rounded-2xl shadow-lg overflow-hidden z-50 hidden">
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="hidden sm:block font-headline text-lg font-bold tracking-tight text-primary">Ethereal Observer</span>
+                <button id="refresh-btn" class="p-2 hover:bg-surface-container-low rounded-full transition-colors duration-300" title="Refresh weather data">
+                    <span class="material-symbols-outlined text-primary">refresh</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="max-w-screen-xl mx-auto px-6 mt-8 space-y-6">
+
+            <!-- Hero Layout: Current Weather & 7-Day Column -->
+            <div id="section-forecast" class="grid grid-cols-1 lg:grid-cols-12 gap-6 scroll-mt-6">
+
+                <!-- Main Focus Area -->
+                <div class="lg:col-span-8 flex flex-col gap-6">
+
+                    <!-- Hero Card -->
+                    <div id="hero-card" class="relative bg-surface-container-lowest rounded-3xl p-8 overflow-hidden min-h-[320px] flex flex-col justify-between">
+                        <div class="relative z-10">
+                            <h2 id="hero-city" class="font-headline text-2xl font-bold">Loading...</h2>
+                            <p id="hero-date" class="font-label text-xs tracking-widest text-outline uppercase mt-1"></p>
+                        </div>
+                        <div class="relative z-10 flex items-end gap-6">
+                            <div id="hero-temp" class="text-display-lg font-headline font-bold text-primary">--°</div>
+                            <div class="pb-3">
+                                <p id="hero-description" class="font-headline text-xl font-medium capitalize"></p>
+                                <p id="hero-details" class="font-body text-sm text-on-surface-variant"></p>
+                            </div>
+                        </div>
+                        <!-- Hero background gradient -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-surface-container-lowest via-surface-container-lowest to-surface-container-low opacity-80"></div>
+                    </div>
+
+                    <!-- Hourly Forecast -->
+                    <div class="bg-surface-container-low recessed-card rounded-3xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-label text-[10px] uppercase tracking-[0.1em] text-on-surface-variant font-bold">Hourly Forecast</h3>
+                            <span class="material-symbols-outlined text-primary text-sm">schedule</span>
+                        </div>
+                        <div id="hourly-container" class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+                            <!-- Hourly items injected by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7-Day Vertical Column -->
+                <div class="lg:col-span-4">
+                    <div class="bg-surface-container-low recessed-card rounded-3xl p-6 h-full">
+                        <h3 class="font-label text-[10px] uppercase tracking-[0.1em] text-on-surface-variant font-bold mb-6">7-Day Forecast</h3>
+                        <div id="daily-container" class="space-y-6">
+                            <!-- Daily items injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bento Metrics Grid -->
+            <div id="section-air-quality" class="grid grid-cols-2 md:grid-cols-4 gap-6 scroll-mt-6">
+                <!-- Humidity -->
+                <div class="bg-surface-container-low recessed-card rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Humidity</p>
+                        <h4 id="metric-humidity" class="font-headline text-2xl font-bold">--%</h4>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-sm">humidity_low</span>
+                        <span id="metric-dewpoint" class="font-body text-[10px] text-outline">Dew point: --°</span>
+                    </div>
+                </div>
+
+                <!-- Air Quality -->
+                <div class="bg-surface-container-low recessed-card rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Air Quality</p>
+                        <h4 id="metric-aqi" class="font-headline text-2xl font-bold">--</h4>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2">
+                        <div id="metric-aqi-dot" class="w-2 h-2 rounded-full bg-outline-variant"></div>
+                        <span id="metric-aqi-label" class="font-body text-[10px] text-outline">--</span>
+                    </div>
+                </div>
+
+                <!-- Visibility -->
+                <div class="bg-surface-container-low recessed-card rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">Visibility</p>
+                        <h4 id="metric-visibility" class="font-headline text-2xl font-bold">-- km</h4>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-sm">visibility</span>
+                        <span id="metric-visibility-label" class="font-body text-[10px] text-outline">--</span>
+                    </div>
+                </div>
+
+                <!-- UV Index -->
+                <div class="bg-surface-container-low recessed-card rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <p class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant mb-1">UV Index</p>
+                        <h4 id="metric-uv" class="font-headline text-2xl font-bold">--</h4>
+                    </div>
+                    <div class="mt-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-sm">wb_sunny</span>
+                        <span id="metric-uv-label" class="font-body text-[10px] text-outline">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sunrise/Sunset & Map -->
+            <div id="section-maps" class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12 scroll-mt-6">
+                <!-- Sun Position -->
+                <div class="bg-surface-container-low recessed-card rounded-3xl p-6 flex flex-col">
+                    <h3 class="font-label text-[10px] uppercase tracking-[0.1em] text-on-surface-variant font-bold mb-6">Sun Position</h3>
+                    <div class="flex flex-col relative px-2">
+                        <!-- SVG Sun Arc spanning full width -->
+                        <div class="w-full">
+                            <svg viewBox="0 0 300 90" class="w-full" style="height: auto; display: block;">
+                                <path d="M 15 85 Q 150 -10 285 85" fill="none" stroke="#aeb4aa" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.3" />
+                                <circle id="sun-dot" cx="15" cy="85" r="6" fill="#605e5b" />
+                            </svg>
+                        </div>
+                        <!-- Sunrise / Sunset labels -->
+                        <div class="flex items-start justify-between">
+                            <div class="text-center">
+                                <span class="material-symbols-outlined text-primary text-2xl">wb_twilight</span>
+                                <p class="font-label text-[10px] text-outline uppercase tracking-wider">Sunrise</p>
+                                <p id="sunrise-time" class="font-headline text-base font-bold">--:--</p>
+                            </div>
+                            <div class="text-center">
+                                <span class="material-symbols-outlined text-primary text-2xl">bedtime</span>
+                                <p class="font-label text-[10px] text-outline uppercase tracking-wider">Sunset</p>
+                                <p id="sunset-time" class="font-headline text-base font-bold">--:--</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Precipitation Map -->
+                <div class="bg-surface-container-low recessed-card rounded-3xl overflow-hidden relative min-h-[200px]">
+                    <div id="precip-map" class="w-full h-full min-h-[200px] bg-surface-container"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low/80 to-transparent pointer-events-none"></div>
+                    <div class="absolute bottom-6 left-6">
+                        <h4 class="font-headline text-lg font-bold">Precipitation Map</h4>
+                        <p id="map-location" class="font-body text-xs text-on-surface-variant mt-1"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-8 py-4 bg-surface/80 backdrop-blur-xl rounded-t-[2rem] shadow-[0_-10px_30px_rgba(46,52,45,0.04)]">
+        <a href="#" class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full w-12 h-12 transition-transform hover:scale-110">
+            <span class="material-symbols-outlined">today</span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center text-outline-variant transition-transform hover:scale-110">
+            <span class="material-symbols-outlined">radar</span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center text-outline-variant transition-transform hover:scale-110">
+            <span class="material-symbols-outlined">warning</span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center text-outline-variant transition-transform hover:scale-110">
+            <span class="material-symbols-outlined">trending_up</span>
+        </a>
+    </nav>
+
+    <!-- Scripts -->
+    <script defer src="js/config.js"></script>
+    <script defer src="js/icons.js"></script>
+    <script defer src="js/state.js"></script>
+    <script defer src="js/api.js"></script>
+    <script defer src="js/ui.js"></script>
+    <script defer src="js/app.js"></script>
+</body>
+</html>

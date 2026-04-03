@@ -1,0 +1,96 @@
+/* The Observer — Custom Styles */
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Manrope', sans-serif;
+    background-color: #fafaf5;
+    color: #2e342d;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Material Symbols config */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Recessed card inner shadow */
+.recessed-card {
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.02), inset -1px -1px 3px rgba(255,255,255,0.7);
+}
+
+/* Large display temperature */
+.text-display-lg {
+    font-size: 4rem;
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+/* Hide scrollbar for horizontal scroll areas */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Skeleton loading pulse */
+.skeleton {
+    background: linear-gradient(90deg, #ecefe7 25%, #e5eae0 50%, #ecefe7 75%);
+    background-size: 200% 100%;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+    border-radius: 0.5rem;
+}
+
+@keyframes skeleton-pulse {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Fade-in animation for data load */
+.fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Search results dropdown item */
+.search-result-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.875rem;
+}
+.search-result-item:hover {
+    background-color: #f3f4ee;
+}
+
+/* Sun arc dot glow */
+#sun-dot {
+    filter: drop-shadow(0 0 6px rgba(96, 94, 91, 0.4));
+}
+
+/* Hourly item active state */
+.hourly-active {
+    background-color: #dee4da;
+    border-radius: 9999px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+/* Smooth transitions for nav links */
+.nav-link {
+    transition: all 0.2s ease;
+}
+.nav-link.active {
+    color: #2e342d;
+    background-color: #f3f4ee;
+    border-radius: 0.75rem;
+}
