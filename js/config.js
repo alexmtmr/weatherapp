@@ -2,8 +2,6 @@
 (function () {
     'use strict';
 
-    var API_KEY = 'e7a8060a90be2dfd8b88a223fdb2b94e';
-
     const CONFIG = {
         API_BASE: 'https://api.openweathermap.org',
         TILE_BASE: 'https://tile.openweathermap.org/map',
@@ -12,15 +10,11 @@
         CACHE_TTL: 10 * 60 * 1000, // 10 minutes
 
         getApiKey: function () {
-            return API_KEY;
-        },
-
-        setApiKey: function () {
-            // Key is hardcoded, no-op
+            return window.__OWM_API_KEY__ || '';
         },
 
         hasApiKey: function () {
-            return true;
+            return !!window.__OWM_API_KEY__;
         },
 
         getLastCity: function () {
