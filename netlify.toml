@@ -1,0 +1,3 @@
+[build]
+  publish = "."
+  command = "echo \"window.__OWM_API_KEY__ = '$OWM_API_KEY';\" > js/env.js"
